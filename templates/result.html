@@ -14,7 +14,25 @@
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
         <script src='https://api.mapbox.com/mapbox.js/plugins/turf/v3.0.11/turf.min.js'></script>
         <style>
-            #map1 {height: 900px;}
+            #map1 {height: 750px;
+            }
+            #Btn1, #Btn2 {
+                      position: absolute;
+                      top:60px;
+                      right:10px;
+                      z-index:100000;
+                      background:white;
+                      color:black;
+                      padding:6px;
+                      border-radius:4px;
+                      font-family: 'Helvetica Neue';
+                      cursor: pointer;
+                      font-size:14px;
+                      text-decoration:none;
+                  }
+            #Btn2 {
+                top:100px;
+              }
         </style>
     </head>
     <body>
@@ -22,6 +40,13 @@
       <nav class="navbar navbar-expand-md navbar-dark bg-dark">
         <div class="container-fluid">
           <a class="navbar-brand" href="{{url_for('index')}}">Home</a>
+          <div class="d-flex" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Viewing: {{schoolname}}</a>
+              </li>
+            </ul>
+          </div>
           <div class="d-flex justify-content-center" id="navbarSupportedContent">
             <form class="d-flex" action="{{url_for('result')}}" method="post">
               <span class="collapse navbar-collapse" style ="color:white">Filter Schools</span>
@@ -32,12 +57,12 @@
           </div>
         </div>
       </nav>
-
+              <div class="leaflet-top leaflet-right" style="pointer-events: auto">
+                <input type="button" id="Btn1" value="Draw" onclick="draw()">
+                <input type="button" id="Btn2" value="Clear" onclick="remove()">
+              </div>
               <div id="map1"></div>
-                  <div class="leaflet-top leaflet-right" style="pointer-events: auto">
-                  <input type="button" id=" Btn1" value="Draw" onclick="draw()">
-                  <input type="button" id=" Btn1" value="Clear" onclick="remove()">
-                  </div>
+
 
               <script>
 // initialize map settings
@@ -126,8 +151,6 @@
                     }
 
               </script>
-              <center>
-                <h2>Viewing: {{schoolname}}</h2>
 
 
 <!--Load Bootstrap and Leaflet JS-->
