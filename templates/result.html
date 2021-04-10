@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <title>Map result</title>
+<!-- Load Boopstrap-->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+        <script src='https://api.mapbox.com/mapbox.js/plugins/turf/v3.0.11/turf.min.js'></script>
+        <style>
+            #map1 {height: 900px;}
+        </style>
+    </head>
+    <body>
+<!--Bootstrap navbar component-->
+      <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="{{url_for('index')}}">Home</a>
+          <div class="d-flex justify-content-center" id="navbarSupportedContent">
+            <form class="d-flex" action="{{url_for('result')}}" method="post">
+              <span class="collapse navbar-collapse" style ="color:white">Filter Schools</span>
+              <input class="form-control me-2" type="text" name = "name" placeholder="Enter School Name">
+              <input class="form-control me-2" type="text" name = "rad" placeholder="Enter Search Radius (meters)">
+              <input type = "submit" value = "Search">
+            </form>
+          </div>
+        </div>
+      </nav>
+
+              <div id="map1"></div>
+                  <div class="leaflet-top leaflet-right" style="pointer-events: auto">
+                  <input type="button" id=" Btn1" value="Draw" onclick="draw()">
+                  <input type="button" id=" Btn1" value="Clear" onclick="remove()">
+                  </div>
+              <script>
+                  var mymap=L.map('map1').setView([51.0499,-114.0666], 11);
+
+                  L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+                    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                    maxZoom: 18,
+                    id: 'mapbox/streets-v11',
+                    tileSize: 512,
+                    zoomOffset: -1,
+                    accessToken: 'pk.eyJ1IjoicmV4dHNhaXFpeWkiLCJhIjoiY2trbDI0dHcyMGNoazJvcHJ4NjRzbmQ1dSJ9.U9khOwx7gRDS8jClvmTDQQ'
+                  }).addTo(mymap);
+
+                  rentals = "https://data.calgary.ca/resource/gzkz-5k9a.geojson"
+                  schools = "https://data.calgary.ca/resource/fd9t-tdn2.geojson"+"?name={{schoolname}}"
+                  var schoolicon=L.icon({
+                    iconUrl: '/static/school.png',
+                    iconSize: [20,20]
+                  });
+                  var rentalicon=L.icon({
+                    iconUrl: '/static/house.png',
+                    iconSize: [18,18]
+                  });
+
+                  var schoollay = new L.geoJSON();
+                  mymap.addLayer(schoollay);
+                  var rentallay = new L.geoJSON();
+                  mymap.addLayer(rentallay);
+                  var coordinates=[];
+                  var polyline=L.geoJSON();
+
+
+                  var buildinglayer=fetch(rentals)
+                                    .then(function(response) {
+                                      return response.json();
+                                    })
+                                    .then(function(data) {
+                                      L.geoJSON(data, {onEachFeature: function (feature, layer){
+                                        rentallay.addLayer(L.marker(([feature.geometry.coordinates[1],feature.geometry.coordinates[0]]), {icon: rentalicon}).bindPopup('ID: '+feature.properties.business_id+'<br>'+'Type: '+feature.properties.type_of_residence+'<br>'+'Address: '+feature.properties.address+'<br>'+'Expiry date: '+feature.properties.licenced_expiry_date));
+                                      }});
+                                    });
+
+                  var schoollayer=fetch(schools)
+                                    .then(function(response) {
+                                      return response.json();
+                                    })
+                                    .then(function(data) {
+                                      L.geoJSON(data, {onEachFeature: function (feature, layer){
+                                        schoollay.addLayer(L.marker(([feature.geometry.coordinates[1],feature.geometry.coordinates[0]]), {icon: schoolicon}).bindPopup('ID: '+feature.properties.structure_id+'<br>'+'name: '+feature.properties.name));
+                                        L.circle([feature.geometry.coordinates[1],feature.geometry.coordinates[0]],{radius:{{rad}}}).addTo(schoollay);
+                                      }});
+                                    });
+
+
+                    function draw(){
+                      mymap.dragging.disable();
+                      mymap.addEventListener('mousedown',function(e){
+                        mymap.addEventListener('mousemove',function(ev){
+                          var latitude=ev.latlng.lat;
+                              longitude=ev.latlng.lng;
+                              latlng=[longitude,latitude];
+                          coordinates.push(latlng);
+                        });
+                      });
+                      mymap.on('mouseup',function(e){
+                        var geojson=turf.multiLineString([coordinates]);
+                        var options = {tolerance:1,highQuality:false};
+                        var simplified=turf.simplify(geojson,options);
+                        var simline=L.geoJSON(simplified);
+                        polyline.addLayer(simline);
+                        polyline.addTo(mymap);
+                        mymap.removeEventListener('mousemove');
+                        mymap.removeEventListener('mousedown');
+                        mymap.dragging.enable();
+                      });
+                    }
+
+                    function remove(){
+                      polyline.clearLayers();
+                      mymap.removeLayer(polyline);
+                      coordinates=[];
+                    }
+
+              </script>
+              <center>
+                <h2>Viewing: {{schoolname}}</h2>
+
+
+<!--Load Bootstrap and Leaflet JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+crossorigin="anonymous"></script>
+    </body>
+  </html>
