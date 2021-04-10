@@ -38,7 +38,9 @@
                   <input type="button" id=" Btn1" value="Draw" onclick="draw()">
                   <input type="button" id=" Btn1" value="Clear" onclick="remove()">
                   </div>
+
               <script>
+// initialize map settings
                   var mymap=L.map('map1').setView([51.0499,-114.0666], 11);
 
                   L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
@@ -52,6 +54,8 @@
 
                   rentals = "https://data.calgary.ca/resource/gzkz-5k9a.geojson"
                   schools = "https://data.calgary.ca/resource/fd9t-tdn2.geojson"+"?name={{schoolname}}"
+
+// setting up icons
                   var schoolicon=L.icon({
                     iconUrl: '/static/school.png',
                     iconSize: [20,20]
@@ -61,6 +65,7 @@
                     iconSize: [18,18]
                   });
 
+// create geoJSONs
                   var schoollay = new L.geoJSON();
                   mymap.addLayer(schoollay);
                   var rentallay = new L.geoJSON();
@@ -90,7 +95,7 @@
                                       }});
                                     });
 
-
+//draw polylines for distance measures
                     function draw(){
                       mymap.dragging.disable();
                       mymap.addEventListener('mousedown',function(e){
@@ -113,7 +118,7 @@
                         mymap.dragging.enable();
                       });
                     }
-
+//remove drawn polylines
                     function remove(){
                       polyline.clearLayers();
                       mymap.removeLayer(polyline);

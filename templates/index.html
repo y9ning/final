@@ -24,6 +24,7 @@
         <div class="container-fluid">
           <a class="navbar-brand" href="{{url_for('index')}}">Home</a>
           <div class="d-flex justify-content-center" id="navbarSupportedContent">
+<!--Search function-->
             <form class="d-flex" action="{{url_for('result')}}" method="post">
               <span class="collapse navbar-collapse" style ="color:white">Filter Schools</span>
               <input class="form-control me-2" type="text" name = "name" placeholder="Enter School Name">
@@ -33,8 +34,6 @@
           </div>
         </div>
       </nav>
-
-<!-- Search for Nearest rentals-->
 
 <!--Map Initialization -->
         <div id="map1"></div>
@@ -49,7 +48,7 @@
               zoomOffset: -1,
               accessToken: 'pk.eyJ1IjoicmV4dHNhaXFpeWkiLCJhIjoiY2trbDI0dHcyMGNoazJvcHJ4NjRzbmQ1dSJ9.U9khOwx7gRDS8jClvmTDQQ'
             }).addTo(mymap);
-
+// fetch API of schools and rentals
             rentals = "https://data.calgary.ca/resource/gzkz-5k9a.geojson"
             schools = "https://data.calgary.ca/resource/fd9t-tdn2.geojson"
             var schoolicon=L.icon({
