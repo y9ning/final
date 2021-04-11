@@ -29,3 +29,6 @@ def result():
         schoolname=request.form.get("name")
         rad=request.form.get("rad")
         return render_template("result.html", schoolname=schoolname, rad=rad)
+@app.route("/routing",methods=["GET","POST"])
+def routing():
+    return render_template("routing.html")
