@@ -23,17 +23,9 @@
   </head>
   <body>
 <!--Bootstrap navbar component-->
-
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
       <div class="container-fluid">
         <a class="navbar-brand" href="{{url_for('index')}}">Home</a>
-        <div class="d-flex justify-content-start" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="{{url_for('routing')}}">Direction</a>
-            </li>
-          </ul>
-        </div>
         <div class="d-flex justify-content-center" id="navbarSupportedContent">
 <!--Search function-->
           <form class="d-flex" action="{{url_for('result')}}" method="post">
@@ -61,43 +53,53 @@
           }).addTo(mymap);
 
           rentals = "https://data.calgary.ca/resource/gzkz-5k9a.geojson"
-          schools = "https://data.calgary.ca/resource/fd9t-tdn2.geojson"
+          schools = "https://data.calgary.ca/resource/fd9t-tdn2.geojson"+"?name={{schoolname}}"
 // fetch API of schools and rentals
 
-
+// setting up icons
           var schoolicon=L.icon({
             iconUrl: '/static/school1.png',
-            iconSize: [20,20]
+            iconSize: [35,35]
           });
           var rentalicon=L.icon({
             iconUrl: '/static/house1.png',
-            iconSize: [15,15]
+            iconSize: [25,25]
           });
-          var schoollayer=fetch(schools)
-                            .then(function(response) {
-                              return response.json();
-                            })
-                            .then(function(data) {
-                              L.geoJSON(data, {onEachFeature: function (feature, layer){
-                                L.marker(([feature.geometry.coordinates[1],feature.geometry.coordinates[0]]), {icon: schoolicon}).bindPopup('ID: '+feature.properties.structure_id+'<br>'+'name: '+feature.properties.name).addTo(mymap);
-                              }});
-                            });
+// create geoJSON for two layers
+          var schoollay = new L.geoJSON();
+          mymap.addLayer(schoollay);
+          var rentallay = new L.geoJSON();
+          mymap.addLayer(rentallay);
+
+
+// add geodata from APIs
+var schoollayer=fetch(schools)
+                  .then(function(response) {
+                    return response.json();
+                  })
+                  .then(function(data) {
+                    L.geoJSON(data, {onEachFeature: function (feature, layer){
+                      schoollay.addLayer(L.marker(([feature.geometry.coordinates[1],feature.geometry.coordinates[0]]), {icon: schoolicon}).bindPopup('ID: '+feature.properties.structure_id+'<br>'+'name: '+feature.properties.name));
+
+                    }});
+                  });
           var buildinglayer=fetch(rentals)
                             .then(function(response) {
                               return response.json();
                             })
                             .then(function(data) {
                               L.geoJSON(data, {onEachFeature: function (feature, layer){
-                                L.marker(([feature.geometry.coordinates[1],feature.geometry.coordinates[0]]), {icon: rentalicon}).bindPopup('ID: '+feature.properties.business_id+'<br>'+'Type: '+feature.properties.type_of_residence+'<br>'+'Address: '+feature.properties.address+'<br>'+'Expiry date: '+feature.properties.licenced_expiry_date).addTo(mymap);
+                                rentallay.addLayer(L.marker(([feature.geometry.coordinates[1],feature.geometry.coordinates[0]]), {icon: rentalicon}).bindPopup('ID: '+feature.properties.business_id+'<br>'+'Type: '+feature.properties.type_of_residence+'<br>'+'Address: '+feature.properties.address+'<br>'+'Expiry date: '+feature.properties.licenced_expiry_date));
                               }});
                             });
-          L.Routing.control({
-            waypoints: [
-              L.latLng(51.0499,-114.0666),
-              L.latLng(51.091402, -114.038724)
-            ],
-            routeWhileDragging: true
-          }).addTo(mymap);
+
+            L.Routing.control({
+              waypoints: [
+                L.latLng(51.0499,-114.0666),
+                L.latLng(51.091402, -114.038724)
+              ],
+              routeWhileDragging: true
+            }).addTo(mymap);
       </script>
 
 
