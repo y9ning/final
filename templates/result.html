@@ -13,9 +13,7 @@
         <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
         <script src='https://api.mapbox.com/mapbox.js/plugins/turf/v3.0.11/turf.min.js'></script>
-        <!--Leaflet routing machine-->
-        <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
-        <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+
         <style>
             #map1 {height: 750px;
             }
@@ -43,7 +41,7 @@
       <nav class="navbar navbar-expand-md navbar-dark bg-dark">
         <div class="container-fluid">
           <a class="navbar-brand" href="{{url_for('index')}}">Home</a>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <div class="d-flex justify-content-start" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="{{url_for('routing')}}">Direction</a>
@@ -159,13 +157,7 @@
                       mymap.removeLayer(polyline);
                       coordinates=[];
                     }
-                    L.Routing.control({
-                        waypoints: [
-                            L.latLng(51.0499,-114.0666),
-                            L.latLng(57.04998, -114.06667)
-                        ],
-                        routeWhileDragging: true
-                    }).addTo(map);
+
               </script>
 
 
@@ -173,8 +165,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
 integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
 crossorigin="anonymous"></script>
-<script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
-<script src="leaflet-routing-machine.js"></script>
+
 </body>
     </body>
   </html>
