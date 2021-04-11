@@ -12,7 +12,7 @@
         <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
         <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
-        <script src='https://api.mapbox.com/mapbox.js/plugins/turf/v3.0.11/turf.min.js'></script>
+        <script src='https://unpkg.com/@turf/turf@6.3.0/turf.min.js'></script>
 
         <style>
             #map1 {height: 750px;
@@ -90,11 +90,11 @@
 
 // setting up icons
                   var schoolicon=L.icon({
-                    iconUrl: '/static/school.png',
+                    iconUrl: '/static/school1.png',
                     iconSize: [20,20]
                   });
                   var rentalicon=L.icon({
-                    iconUrl: '/static/house.png',
+                    iconUrl: '/static/house1.png',
                     iconSize: [18,18]
                   });
 
@@ -142,8 +142,9 @@
                       mymap.on('mouseup',function(e){
                         var geojson=turf.multiLineString([coordinates]);
                         var options = {tolerance:1,highQuality:false};
+                        var length = turf.length(geojson);
                         var simplified=turf.simplify(geojson,options);
-                        var simline=L.geoJSON(simplified);
+                        var simline=L.geoJSON(simplified).bindPopup(String(length));
                         polyline.addLayer(simline);
                         polyline.addTo(mymap);
                         mymap.removeEventListener('mousemove');

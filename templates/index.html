@@ -1,82 +1,86 @@
+
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Map result</title>
-        <!--Load Bootstrap-->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+  <head>
+      <title>Map result</title>
+      <!--Load Bootstrap-->
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
 
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
-        <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
-        <style>
-            #map1 {height:750px;
-            }
-        </style>
-    </head>
-    <body>
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+      <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+      <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+      <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+      <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+
+
+      <style>
+          #map1 {height:750px;
+          }
+      </style>
+  </head>
+  <body>
 <!--Bootstrap navbar component-->
 
-      <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="{{url_for('index')}}">Home</a>
-          <div class="d-flex justify-content-start" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="{{url_for('routing')}}">Direction</a>
-              </li>
-            </ul>
-          </div>
-          <div class="d-flex justify-content-center" id="navbarSupportedContent">
-<!--Search function-->
-            <form class="d-flex" action="{{url_for('result')}}" method="post">
-              <span class="collapse navbar-collapse" style ="color:white">Filter Schools</span>
-              <input class="form-control me-2" type="text" name = "name" placeholder="Enter School Name">
-              <input class="form-control me-2" type="text" name = "rad" placeholder="Enter Search Radius (meters)">
-              <input type = "submit" value = "Search">
-            </form>
-          </div>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{{url_for('index')}}">Home</a>
+        <div class="d-flex justify-content-start" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="{{url_for('routing')}}">Direction</a>
+            </li>
+          </ul>
         </div>
-      </nav>
+        <div class="d-flex justify-content-center" id="navbarSupportedContent">
+<!--Search function-->
+          <form class="d-flex" action="{{url_for('result')}}" method="post">
+            <span class="collapse navbar-collapse" style ="color:white">Filter Schools</span>
+            <input class="form-control me-2" type="text" name = "name" placeholder="Enter School Name">
+            <input class="form-control me-2" type="text" name = "rad" placeholder="Enter Search Radius (meters)">
+            <input type = "submit" value = "Search">
+          </form>
+        </div>
+      </div>
+    </nav>
 
 <!--Map Initialization -->
-        <div id="map1"></div>
-        <script>
-            var mymap=L.map('map1').setView([51.0499,-114.0666], 11);
+      <div id="map1"></div>
+      <script>
+          var mymap=L.map('map1').setView([51.0499,-114.0666], 11);
 
-            L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-              attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-              maxZoom: 18,
-              id: 'mapbox/streets-v11',
-              tileSize: 512,
-              zoomOffset: -1,
-              accessToken: 'pk.eyJ1IjoicmV4dHNhaXFpeWkiLCJhIjoiY2trbDI0dHcyMGNoazJvcHJ4NjRzbmQ1dSJ9.U9khOwx7gRDS8jClvmTDQQ'
-            }).addTo(mymap);
+          L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+            maxZoom: 18,
+            id: 'mapbox/streets-v11',
+            tileSize: 512,
+            zoomOffset: -1,
+            accessToken: 'pk.eyJ1IjoicmV4dHNhaXFpeWkiLCJhIjoiY2trbDI0dHcyMGNoazJvcHJ4NjRzbmQ1dSJ9.U9khOwx7gRDS8jClvmTDQQ'
+          }).addTo(mymap);
 // fetch API of schools and rentals
-            rentals = "https://data.calgary.ca/resource/gzkz-5k9a.geojson"
-            schools = "https://data.calgary.ca/resource/fd9t-tdn2.geojson"
-            var schoolicon=L.icon({
-              iconUrl: '/static/school.png',
-              iconSize: [15,15]
-            });
-            var schoollayer=fetch(schools)
-                              .then(function(response) {
-                                return response.json();
-                              })
-                              .then(function(data) {
-                                L.geoJSON(data, {onEachFeature: function (feature, layer){
-                                  L.marker(([feature.geometry.coordinates[1],feature.geometry.coordinates[0]]), {icon: schoolicon}).bindPopup('ID: '+feature.properties.structure_id+'<br>'+'name: '+feature.properties.name).addTo(mymap);
-                                }});
-                              });
-        </script>
+          rentals = "https://data.calgary.ca/resource/gzkz-5k9a.geojson"
+          schools = "https://data.calgary.ca/resource/fd9t-tdn2.geojson"
+          var schoolicon=L.icon({
+            iconUrl: '/static/school1.png',
+            iconSize: [15,15]
+          });
+          var schoollayer=fetch(schools)
+                            .then(function(response) {
+                              return response.json();
+                            })
+                            .then(function(data) {
+                              L.geoJSON(data, {onEachFeature: function (feature, layer){
+                                L.marker(([feature.geometry.coordinates[1],feature.geometry.coordinates[0]]), {icon: schoolicon}).bindPopup('ID: '+feature.properties.structure_id+'<br>'+'name: '+feature.properties.name).addTo(mymap);
+                              }});
+                            });
+
+      </script>
 
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
 
 
-    </body>
-  </html>
+  </body>
+</html>
