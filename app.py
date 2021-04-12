@@ -35,3 +35,8 @@ def routing():
     if request.method=='POST':
         schoolname=request.form.get("name")
         return render_template("routing.html", schoolname=schoolname)
+    
+@app.route("/api/<string:business_id>")
+def api(business_id):
+    res=business_id
+    return render_template("api.html",res=res)
